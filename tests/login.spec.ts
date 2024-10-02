@@ -20,5 +20,18 @@ test.describe('User login to Demobank', () => {
     //Assert
     await expect(page.getByTestId('user-name')).toHaveText(expectedUserName);
   });
+
+  test('unsuccessful login with short username', async ({ page }) => {
+    // Arrange
+    const userId = 'tester';
+    const expectedTextForShortUsername = 'identyfikator ma min. 8 znaków';
+
+    // Act
+    await page.getByTestId('login-input').fill(userId);
+    await page.getByTestId('password-input').click();
+
+    //Assert
+    await expect(page.getByTestId('error-login-id')).toHaveText(expectedTextForShortUsername);
+  });
 });
 
