@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { loginData } from '../test-data/login.data';
 
 test.describe('User money transfer', () => {
@@ -12,6 +12,12 @@ test.describe('User money transfer', () => {
     await page.getByTestId('login-button').click();
   });
 
+  async function readBalance(page: Page) {
+    const balanceInteger = await page.locator('#money_value').innerText();
+    const balanceDecimals = await page.locator("#decimal_value").innerText();
+    return `${balanceInteger}.${balanceDecimals}`;
+  }
+
   test('quick transfer', async ({ page }) => {
     // Arrange
     const transferReceiver = 'Chuck Demobankowy';
@@ -19,10 +25,7 @@ test.describe('User money transfer', () => {
     const transferTitle = 'prezent';
     const expectTransferMessage = `Przelew wykonany! ${transferReceiver} - ${transferAmount},00PLN - prezent`
 
-    // TODO: Extract the logic fetching user's balance to a separate function.
-    const initialBalanceInteger = await page.locator('#money_value').innerText();
-    const initialBalanceDecimals = await page.locator("#decimal_value").innerText();
-    const initialBalance = `${initialBalanceInteger}.${initialBalanceDecimals}`;
+    const initialBalance = await readBalance(page)
     const expectedBalance = Number(initialBalance) - Number(transferAmount);
 
     // Act
@@ -34,9 +37,28 @@ test.describe('User money transfer', () => {
 
     //Assert
     await expect(page.getByTestId('message-text')).toHaveText(expectTransferMessage)
-    const finalBalanceInteger = await page.locator('#money_value').innerText();
-    const finalBalanceDecimals = await page.locator("#decimal_value").innerText();
-    const finalBalance = `${finalBalanceInteger}.${finalBalanceDecimals}`;
+    const finalBalance = await readBalance(page)
+    await expect(finalBalance).toBe(`${expectedBalance.toFixed(2)}`);
+  });
+
+  test('phone topup', async ({ page }) => {
+    //Arrange
+    const topupReceiver = '500 xxx xxx';
+    const topupAmount = '25';
+    const expectTransferMessage = `Doładowanie wykonane! ${topupAmount},00PLN na numer ${topupReceiver}`
+    const initialBalance = await readBalance(page)
+    const expectedBalance = Number(initialBalance) - Number(topupAmount);
+
+    //Act
+    await page.locator('#widget_1_topup_receiver').selectOption(topupReceiver);
+    await page.locator('#widget_1_topup_amount').fill(topupAmount);
+    await page.locator('#widget_1_topup_agreement').click();
+    await page.getByRole('button', { name: 'doładuj telefon' }).click();
+    await page.getByTestId('close-button').click();
+
+    //Assert
+    await expect(page.getByTestId('message-text')).toHaveText(expectTransferMessage)
+    const finalBalance = await readBalance(page)
     await expect(finalBalance).toBe(`${expectedBalance.toFixed(2)}`);
   });
 });
