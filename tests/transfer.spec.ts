@@ -1,15 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
-import { loginData } from '../test-data/login.data';
+import { logIn } from '../test-utils/utils';
 
 test.describe('User money transfer', () => {
   test.beforeEach(async ({ page }) => {
-    // TODO: Extract login procedure to a helper function.
-    const userId = loginData.userId;
-    const userPassword = loginData.userPassword;
-    await page.goto('/')
-    await page.getByTestId('login-input').fill(userId);
-    await page.getByTestId('password-input').fill(userPassword);
-    await page.getByTestId('login-button').click();
+    await logIn(page)
   });
 
   async function readBalance(page: Page) {
@@ -24,7 +18,6 @@ test.describe('User money transfer', () => {
     const transferAmount = '50';
     const transferTitle = 'prezent';
     const expectTransferMessage = `Przelew wykonany! ${transferReceiver} - ${transferAmount},00PLN - prezent`
-
     const initialBalance = await readBalance(page)
     const expectedBalance = Number(initialBalance) - Number(transferAmount);
 
