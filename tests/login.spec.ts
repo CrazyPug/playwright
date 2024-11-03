@@ -40,10 +40,12 @@ test.describe('User login', () => {
     const userPassword = '1234567';
     const expectedTextForTooShortPassword = 'hasło ma min. 8 znaków';
 
+    // Act
     await page.getByTestId('login-input').fill(userId);
     await page.getByTestId('password-input').fill(userPassword);
     await page.getByTestId('password-input').blur();
 
+    // Assert
     await expect(page.getByTestId('error-login-password')).toHaveText(expectedTextForTooShortPassword);
   });
 });
