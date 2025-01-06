@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { logIn } from '../test-utils/utils';
 
-test.describe('User money transfer', () => {
+test.describe('User quick money transfer', () => {
   test.beforeEach(async ({ page }) => {
     await logIn(page)
   });
