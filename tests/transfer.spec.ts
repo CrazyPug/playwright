@@ -1,9 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
-import { logIn } from '../test-utils/utils';
+import { LoginPage } from '../pages/login.page';
 
 test.describe('User quick money transfer', () => {
   test.beforeEach(async ({ page }) => {
-    await logIn(page)
+    await new LoginPage(page).loginSuccesfully()
   });
 
   async function readBalance(page: Page) {

@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { logIn } from '../test-utils/utils';
+import { LoginPage } from '../pages/login.page';
 
 test.describe('User logout', () => {
   test('successful logout', async ({ page }) => {
     // Act
-    await logIn(page);
+    await new LoginPage(page).loginSuccesfully();
     await page.getByTestId('logout-button').click();
 
     // Assert

@@ -1,9 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
-import { logIn } from '../test-utils/utils';
+import { LoginPage } from '../pages/login.page';
 
 test.describe('User payments (from menu)', () => {
     test.beforeEach(async ({ page }) => {
-        await logIn(page);
+        await new LoginPage(page).loginSuccesfully();
         await page.getByRole('link', { name: 'płatności' }).click();
     })
 
