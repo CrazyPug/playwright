@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { loginData } from '../test-data/login.data';
 
 export class LoginPage {
@@ -21,14 +21,30 @@ export class LoginPage {
         return this.passwordInput.fill(password)
     }
 
-    async clickButton() {
-        return this.loginButton.click()
+    async clickPasswordInput(){
+         return this.passwordInput.click()
     }
 
+    async leavePasswordInput() {
+        return this.passwordInput.blur()
+    }
+
+    async clickSubmit() {
+        return this.loginButton.click()
+    }
+    
     async loginSuccesfully() {
         await this.page.goto('/')
         await this.fillLogin(loginData.userId)
         await this.fillPassword(loginData.userPassword)
-        await this.clickButton()
+        await this.clickSubmit()
+    }
+
+    async expectLoginInputError(error: string) {
+        return expect(this.page.getByTestId('error-login-id')).toHaveText(error);
+    }
+
+    async expectPasswordInputError(error: string) {
+        return expect(this.page.getByTestId('error-login-password')).toHaveText(error);
     }
 }
