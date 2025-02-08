@@ -25,11 +25,11 @@ test.describe('User login', () => {
 
     // Act
     const loginPage = new LoginPage(page)
-    await loginPage.fillLogin(userId);
-    await loginPage.clickPasswordInput();
+    await loginPage.loginInput.fill(userId);
+    await loginPage.passwordInput.click();
 
     // Assert
-    await loginPage.expectLoginInputError(expectedTextForShortUsername);
+    await expect(page.getByTestId('error-login-id')).toHaveText(expectedTextForShortUsername);
   });
 
   test('unsuccessful login with too short password', async ({ page }) => {
@@ -40,11 +40,11 @@ test.describe('User login', () => {
 
     // Act
     const loginPage = new LoginPage(page)
-    await loginPage.fillLogin(userId)
-    await loginPage.fillPassword(userPassword)
-    await loginPage.leavePasswordInput()
+    await loginPage.loginInput.fill(userId);
+    await loginPage.passwordInput.fill(userPassword);
+    await loginPage.passwordInput.blur();
 
     // Assert
-    await loginPage.expectPasswordInputError(expectedTextForTooShortPassword);
+    await expect(page.getByTestId('error-login-password')).toHaveText(expectedTextForTooShortPassword);
   });
 });

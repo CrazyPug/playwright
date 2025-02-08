@@ -1,51 +1,32 @@
 import { test, expect, Page } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
+import { paymentData } from '../test-data/payment.data';
+import { PaymentPage } from '../pages/payment.page';
 
-test.describe('User payments (from menu)', () => {
+test.describe('User payments from menu', () => {
     test.beforeEach(async ({ page }) => {
         await new LoginPage(page).loginSuccesfully();
         await page.getByRole('link', { name: 'płatności' }).click();
-    })
-
-    async function fillPaymentForm(
-        page: Page,
-        userAccount: string,
-        paymentReceiver: string,
-        receiverAccount: string,
-        amountOfPayment: string,
-        titleOfPayment: string,
-        userEmail: string
-    ) {
-        await page.locator('#form_account_from').selectOption(userAccount);
-        await page.getByTestId('transfer_receiver').fill(paymentReceiver);
-        await page.getByTestId('form_account_to').fill(receiverAccount);
-        await page.getByTestId('form_amount').fill(amountOfPayment);
-        await page.getByTestId('form_title').fill(titleOfPayment);
-        await page.getByLabel('ekspresowy').click();
-        await page.locator('#uniform-form_is_email span').click();
-        await page.locator('#form_email').fill(userEmail);
-        await page.locator('#uniform-form_add_receiver span').click();
-    }
+    });
 
     test('successful payment with required form data', async ({ page }) => {
         // Arrange
-        const userAccount = '[KO] konto na życie [13 159,20 PLN] 4141...0000';
-        const paymentReceiver = 'Anna Kowalska';
-        const reciverAccount = '34 5676 6767 6769 8798 7897 9878';
-        const amountOfPayment = '350';
-        const titleOfPayment = 'na prezent';
-        const userEmail = 'jan.demobankowy@gmail.com';
+        const userAccount = paymentData.userAccount;
+        const paymentReceiver = paymentData.paymentReceiver;
+        const receiverAccount = paymentData.reciverAccount;
+        const amountOfPayment = paymentData.amountOfPayment;
+        const titleOfPayment = paymentData.titleOfPayment;
+        const userEmail = paymentData.userEmail;
 
         // Act
-        await fillPaymentForm(
-            page,
+        await new PaymentPage(page).fillPaymentForm(
             userAccount,
             paymentReceiver,
-            reciverAccount,
+            receiverAccount,
             amountOfPayment,
             titleOfPayment,
             userEmail
-        );
+        )
         await page.getByRole('button', { name: 'wykonaj przelew' }).click();
 
         // Assert
@@ -58,16 +39,15 @@ test.describe('User payments (from menu)', () => {
 
     test('unsuccessful payment with missing receiver', async ({ page }) => {
         // Arrange
-        const userAccount = '[KO] konto na życie [13 159,20 PLN] 4141...0000';
+        const userAccount = paymentData.userAccount;
         const paymentReceiver = '';
-        const receiverAccount = '34 5676 6767 6769 8798 7897 9878';
-        const amountOfPayment = '350';
-        const titleOfPayment = 'na prezent';
-        const userEmail = 'jan.demobankowy@gmail.com';
+        const receiverAccount = paymentData.reciverAccount;
+        const amountOfPayment = paymentData.amountOfPayment;
+        const titleOfPayment = paymentData.titleOfPayment;
+        const userEmail = paymentData.userEmail;
 
         // Act
-        await fillPaymentForm(
-            page,
+        await new PaymentPage(page).fillPaymentForm(
             userAccount,
             paymentReceiver,
             receiverAccount,
@@ -83,16 +63,15 @@ test.describe('User payments (from menu)', () => {
 
     test('unsuccessful payment with missing receiver account', async ({ page }) => {
         // Arrange
-        const userAccount = '[KO] konto na życie [13 159,20 PLN] 4141...0000';
-        const paymentReceiver = 'Anna Kowalska';
+        const userAccount = paymentData.userAccount;
+        const paymentReceiver = paymentData.paymentReceiver;
         const receiverAccount = '';
-        const amountOfPayment = '350';
-        const titleOfPayment = 'na prezent';
-        const userEmail = 'jan.demobankowy@gmail.com';
+        const amountOfPayment = paymentData.amountOfPayment;
+        const titleOfPayment = paymentData.titleOfPayment;
+        const userEmail = paymentData.userEmail;
 
         // Act
-        await fillPaymentForm(
-            page,
+        await new PaymentPage(page).fillPaymentForm(
             userAccount,
             paymentReceiver,
             receiverAccount,

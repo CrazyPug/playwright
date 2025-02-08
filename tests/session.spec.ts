@@ -29,5 +29,5 @@ test.describe('session time', () => {
     await page.waitForTimeout(1500)
     const timeAfter = await getSessionLeft(page)
     await expect(timeAfter).toBe('09:59')
-  })
-})
+  });
+});
