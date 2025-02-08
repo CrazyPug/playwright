@@ -1,9 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
-import { logIn } from '../test-utils/utils';
+import { LoginPage } from '../pages/login.page';
 
 test.describe('session time', () => {
   test.beforeEach(async ({ page }) => {
-    await logIn(page)
+    await new LoginPage(page).loginSuccesfully()
   });
 
   async function getSessionLeftMinutes(page: Page) {
@@ -29,5 +29,5 @@ test.describe('session time', () => {
     await page.waitForTimeout(1500)
     const timeAfter = await getSessionLeft(page)
     await expect(timeAfter).toBe('09:59')
-  })
-})
+  });
+});
